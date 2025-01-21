@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "259663845785",
+    "project_id": "tana-commerce",
+    "storage_bucket": "tana-commerce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259663845785:android:1f70c1db4c3985af321b08",
+        "android_client_info": {
+          "package_name": "com.example.tana_Ecommerce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8NWehL-J6luwkJhAXS0jR1nwzqPUfQiM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
