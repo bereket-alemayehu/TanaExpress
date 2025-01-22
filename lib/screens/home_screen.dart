@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _navigateToDetailScreen(CartItem item) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => DetailScreen(item: item, addToCart: _addToCart),
+        builder: (context) => DetailScreen(item: item),
       ),
     );
   }

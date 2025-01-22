@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen(
-      {super.key,
-      required this.item,
-      required void Function(CartItem item) addToCart});
+  const DetailScreen({
+    super.key,
+    required this.item,
+  });
   final CartItem item;
 
   @override

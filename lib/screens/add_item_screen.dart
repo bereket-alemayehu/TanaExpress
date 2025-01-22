@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
 import 'package:tana_web_commerce/firebase_model/firebase_operations.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 class AddItemScreen extends StatefulWidget {
   const AddItemScreen({super.key, required this.addToCart});
@@ -19,6 +20,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   double? _selectedPrice;
   String? _selectedType;
   final FirebaseOperations _firebaseOps = FirebaseOperations();
+  final Uuid uuid = const Uuid();
 
   final List<double> _priceOptions = [
     1000.0,
@@ -57,18 +59,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
         imageUrl = await _uploadImageToFirebase(_image!);
       }
       final newItem = CartItem(
-        id: '', // You can set an id if needed
+        id: uuid.v4(),
         type: _selectedType!,
         price: _selectedPrice!,
         image: imageUrl,
       );
 
-      // Update the UI immediately
       widget.addToCart(newItem);
 
-      // Check if the widget is still mounted before showing the snackbar and navigating back
       if (mounted) {
-        // Show a success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -80,18 +79,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
           ),
         );
 
-        // Navigate back to the previous screen
         Navigator.of(context).pop();
       }
 
-      // Add the item to the database asynchronously
       try {
         await _firebaseOps.addToCart(newItem);
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Error adding item to database: $e'),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error adding item to database: $e'),
+            ),
+          );
         }
       }
     }

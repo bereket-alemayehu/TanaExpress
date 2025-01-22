@@ -16,7 +16,6 @@ class _EditItemScreenState extends State<EditItemScreen> {
   File? _image;
   late double _selectedPrice;
   late String _selectedType;
-
   final List<double> _priceOptions = [
     1000.0,
     2500.0,
@@ -55,6 +54,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
         price: _selectedPrice,
         image: _image?.path ?? '',
       );
+
       Navigator.of(context).pop(editedItem);
     }
   }

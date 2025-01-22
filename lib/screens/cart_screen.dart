@@ -25,23 +25,16 @@ class _CartscreenState extends State<Cartscreen> {
       ),
     );
     if (editedItem != null && editedItem is CartItem) {
-      setState(() {
-        // Find the index of the item to be edited
-        int index = widget.cartList.indexWhere((i) => i.id == item.id);
-        if (index != -1) {
-          // Update the item at the found index
-          widget.cartList[index] = editedItem;
-        }
-      });
-
-      setState(() {
-        // Find the index of the item to be edited
-        int index = widget.cartList.indexWhere((i) => i.id == item.id);
-        if (index != -1) {
-          // Update the item at the found index
-          widget.cartList[index] = editedItem;
-        }
-      });
+      setState(
+        () {
+          // Find the index of the item to be edited
+          int index = widget.cartList.indexWhere((i) => i.id == item.id);
+          if (index != -1) {
+            // Update the item at the found index
+            widget.cartList[index] = editedItem;
+          }
+        },
+      );
       await _firebaseOps.updateCloth(item.id, editedItem);
     }
   }
@@ -52,22 +45,6 @@ class _CartscreenState extends State<Cartscreen> {
       widget.cartList.removeWhere((i) => i.id == item.id);
     });
     await _firebaseOps.deleteCloth(item.id);
-  }
-
-  Future<void> _orderItem(CartItem item) async {
-    await _firebaseOps.addToCart(item);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Order placed successfully',
-            style: TextStyle(color: Colors.white),
-          ),
-          duration: Duration(milliseconds: 300),
-          backgroundColor: Colors.greenAccent,
-        ),
-      );
-    }
   }
 
   @override
@@ -134,13 +111,6 @@ class _CartscreenState extends State<Cartscreen> {
                           onPressed: () => _deleteItem(item),
                           icon: const Icon(Icons.delete_forever_outlined),
                         ),
-                        TextButton(
-                          onPressed: () => _orderItem(item),
-                          child: const Text(
-                            'Order',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        )
                       ],
                     ),
                   );
