@@ -50,7 +50,6 @@ class _CartscreenState extends State<Cartscreen> {
     setState(() {
       // Remove the specific item from the cart list
       widget.cartList.removeWhere((i) => i.id == item.id);
-
     });
     await _firebaseOps.deleteCloth(item.id);
   }

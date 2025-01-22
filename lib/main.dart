@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tana_web_commerce/screens/home_screen.dart'; 
+import 'package:tana_web_commerce/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: 'YOUR_API_KEY',
-      appId: 'YOUR_APP_ID',
-      messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-      projectId: 'YOUR_PROJECT_ID',
-      storageBucket: 'YOUR_STORAGE_BUCKET',
+      apiKey: 'AIzaSyD8NWehL-J6luwkJhAXS0jR1nwzqPUfQiM',
+      appId: '1:259663845785:android:1f70c1db4c3985af321b08',
+      messagingSenderId: '259663845785',
+      projectId: 'tana-commerce',
     ),
   );
   runApp(const MyApp());
