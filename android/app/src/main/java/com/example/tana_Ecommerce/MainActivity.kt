@@ -1,4 +1,4 @@
-package com.example.tana_web_commerce
+package com.example.tana_Ecommerce
 
 import io.flutter.embedding.android.FlutterActivity
 

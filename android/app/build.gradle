@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tana_web_commerce"
+     namespace = "com.example.tana_Ecommerce"
     compileSdk = 34
 
     compileOptions {
@@ -28,7 +28,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-        ndkVersion = "25.0.8775105"
+        // ndkVersion = "25.0.8775105"
 
     }
 
