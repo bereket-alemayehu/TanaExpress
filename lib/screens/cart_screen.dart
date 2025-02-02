@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
-import 'package:tana_web_commerce/firebase_model/firebase_operations.dart';
-import 'package:tana_web_commerce/screens/edit_item_screen.dart';
+import 'package:tana_web_commerce/screens/order_now.dart'; // Import the new file
 
 class Cartscreen extends StatefulWidget {
   const Cartscreen({
@@ -16,35 +14,19 @@ class Cartscreen extends StatefulWidget {
 }
 
 class _CartscreenState extends State<Cartscreen> {
-  final FirebaseOperations _firebaseOps = FirebaseOperations();
-
-  Future<void> _editItem(CartItem item) async {
-    final editedItem = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => EditItemScreen(item: item),
-      ),
+  Future<void> _showOrderNowSheet(CartItem item) async {
+    final qty = await showModalBottomSheet<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return OrderNowSheet(item: item); // Pass the item to the sheet
+      },
     );
-    if (editedItem != null && editedItem is CartItem) {
-      setState(
-        () {
-          // Find the index of the item to be edited
-          int index = widget.cartList.indexWhere((i) => i.id == item.id);
-          if (index != -1) {
-            // Update the item at the found index
-            widget.cartList[index] = editedItem;
-          }
-        },
-      );
-      await _firebaseOps.updateCloth(item.id, editedItem);
-    }
-  }
 
-  Future<void> _deleteItem(CartItem item) async {
-    setState(() {
-      // Remove the specific item from the cart list
-      widget.cartList.removeWhere((i) => i.id == item.id);
-    });
-    await _firebaseOps.deleteCloth(item.id);
+    if (qty != null) {
+      // Use the quantity selected by the user
+      // Add the item with the updated quantity to the cart or handle the purchase logic here
+      print('User selected quantity: $qty');
+    }
   }
 
   @override
@@ -57,7 +39,10 @@ class _CartscreenState extends State<Cartscreen> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Center(
@@ -79,7 +64,7 @@ class _CartscreenState extends State<Cartscreen> {
                         shape: BoxShape.rectangle,
                         image: item.image.isNotEmpty
                             ? DecorationImage(
-                                image: FileImage(File(item.image)),
+                                image: NetworkImage(item.image),
                                 fit: BoxFit.cover,
                               )
                             : null,
@@ -96,20 +81,26 @@ class _CartscreenState extends State<Cartscreen> {
                         Text(
                           'Price: ${item.price} Birr',
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12),
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
                       ],
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          onPressed: () => _editItem(item),
-                          icon: const Icon(Icons.edit),
-                        ),
-                        IconButton(
-                          onPressed: () => _deleteItem(item),
-                          icon: const Icon(Icons.delete_forever_outlined),
+                        TextButton(
+                          onPressed: () =>
+                              _showOrderNowSheet(item), // Show the bottom sheet
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text(
+                            'Buy now',
+                            style: TextStyle(fontSize: 12),
+                          ),
                         ),
                       ],
                     ),

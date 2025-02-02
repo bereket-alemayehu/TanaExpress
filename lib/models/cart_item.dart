@@ -1,36 +1,42 @@
-// import 'package:uuid/uuid.dart';
-
-// var uuid = Uuid();
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartItem {
   final String id;
   final String type;
-  final double price;
+  double price;
   final String image;
+  double qty;
+  final String detail;
 
   CartItem({
-    required this.id,
     required this.type,
     required this.price,
     required this.image,
+    required this.qty,
+    required this.detail,
+    required this.id,
   });
+
+  factory CartItem.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    return CartItem(
+      id: doc.id,
+      type: data?['type'] as String? ?? 'Unknown', // Default value if null
+      price: (data?['price'] as num?)?.toDouble() ??
+          0.0, // Convert and handle null
+      image: data?['image'] as String? ?? '', // Empty string if null
+      detail:
+          data?['detail'] as String? ?? 'No details available', // Default text
+      qty: (data?['qty'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+  Map<String, dynamic> toFirestore() {
+    return {
+      'type': type,
+      'image': image,
+      'price': price,
+      'qty': qty,
+      'detail': detail,
+    };
+  }
 }
-
-
-/// import 'package:uuid/uuid.dart';
-
-// var uuid = const Uuid();
-
-// class CartItem {
-//   final String id;
-//   final String type;
-//   final double price;
-//   final String image;
-
-//   CartItem({
-//     required this.type,
-//     required this.price,
-//     required this.image,
-//   }) : id = uuid.v4(); // Automatically generate a UUID for `id`
-// }
-///

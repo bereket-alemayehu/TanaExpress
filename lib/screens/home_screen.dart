@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:tana_web_commerce/firebase_model/firebase_operations.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
 import 'package:tana_web_commerce/screens/cart_screen.dart';
-import 'package:tana_web_commerce/screens/add_item_screen.dart';
 import 'package:tana_web_commerce/screens/detail_screen.dart';
+import 'package:tana_web_commerce/screens/order_items.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,16 +16,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<CartItem> cartList = [];
+  final FirebaseOperations firebaseOperations = FirebaseOperations();
   String selectedCategory = 'Cultural';
-  final CollectionReference clothCollection =
-      FirebaseFirestore.instance.collection('cloths');
 
-  Future<void> _navigateToAddItemScreen() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => AddItemScreen(addToCart: _addToCart),
-      ),
-    );
+  int orderedItemCount = 0;
+  int cartItemCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrderedItemCount();
+  }
+
+  void _fetchOrderedItemCount() {
+    FirebaseFirestore.instance
+        .collection('ordered_items')
+        .snapshots()
+        .listen((snapshot) {
+      setState(() {
+        orderedItemCount = snapshot.docs.length;
+      });
+    });
   }
 
   Future<void> _navigateToCartScreen() async {
@@ -34,135 +47,131 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _addToCart(CartItem item) {
+    setState(() {
+      cartList.add(item);
+      cartItemCount = cartList.length;
+    });
+  }
+
   Future<void> _navigateToDetailScreen(CartItem item) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => DetailScreen(item: item),
+        builder: (context) => DetailScreen(item: item, addToCart: _addToCart),
       ),
     );
   }
 
-  void _addToCart(CartItem item) {
-    setState(() {
-      cartList.add(item);
-    });
-  }
-
-  Future<void> _deleteItem(CartItem item) async {
-    setState(() {
-      cartList.removeWhere((i) => i.id == item.id);
-    });
-    await FirebaseFirestore.instance.collection('cloths').doc(item.id).delete();
+  Future<void> _navigateToOrderedScreen() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const OrderedItem(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tana Ecommerce'),
-        backgroundColor: Colors.green,
         foregroundColor: Colors.white,
+        backgroundColor: Colors.green,
+        title: const Text(
+          "TanaExpress",
+          style: TextStyle(
+              color: Color.fromARGB(255, 69, 10, 171),
+              fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(
-            onPressed: _navigateToCartScreen,
-            icon: const Icon(Icons.shopping_cart),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: clothCollection.snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Error fetching data'),
-                  );
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No items available in the database.',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  );
-                }
-
-                List<CartItem> allItems = snapshot.data!.docs.map((doc) {
-                  return CartItem(
-                    id: doc.id,
-                    type: doc['type'],
-                    price: doc['price'],
-                    image: doc['image'],
-                  );
-                }).toList();
-
-                List<CartItem> filteredData = allItems
-                    .where((item) => item.type == selectedCategory)
-                    .toList();
-
-                if (filteredData.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'No items available for $selectedCategory cloths.',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  );
-                }
-
-                return GridView.builder(
-                  itemCount: filteredData.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.2,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 20,
-                  ),
-                  itemBuilder: (context, index) {
-                    final item = filteredData[index];
-                    return GestureDetector(
-                      onTap: () => _navigateToDetailScreen(item),
-                      child: Card(
-                        elevation: 4,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.network(
-                              item.image,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              item.type,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text('${item.price} Birr'),
-                            IconButton(
-                              onPressed: () => _deleteItem(item),
-                              icon: const Icon(Icons.delete_forever_outlined),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+          badges.Badge(
+            badgeContent: Text(
+              orderedItemCount.toString(),
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+            ),
+            showBadge: orderedItemCount > 0,
+            position: badges.BadgePosition.topEnd(top: 0, end: 3),
+            child: IconButton(
+              onPressed: _navigateToOrderedScreen,
+              icon: const Icon(Icons.local_shipping_outlined),
+            ),
+          ),
+          badges.Badge(
+            badgeContent: Text(
+              cartItemCount.toString(),
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+            ),
+            showBadge: cartItemCount > 0,
+            position: badges.BadgePosition.topEnd(top: 0, end: 3),
+            child: IconButton(
+              onPressed: _navigateToCartScreen,
+              icon: const Icon(Icons.shopping_cart_outlined),
             ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToAddItemScreen,
-        child: const Icon(Icons.add),
+      body: StreamBuilder<List<CartItem>>(
+        stream: firebaseOperations.getClothesByCategoryStream(selectedCategory),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Error fetching data'),
+            );
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text(
+                'No items available in the database.',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
+
+          List<CartItem> filteredData = snapshot.data!;
+
+          return GridView.builder(
+            shrinkWrap: true,
+            itemCount: filteredData.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+            ),
+            itemBuilder: (context, index) {
+              final item = filteredData[index];
+              return GestureDetector(
+                onTap: () => _navigateToDetailScreen(item),
+                child: Card(
+                  elevation: 4,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          item.image,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Price: ${item.price} Birr',
+                          style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [

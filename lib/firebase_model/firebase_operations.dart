@@ -5,38 +5,19 @@ class FirebaseOperations {
   final CollectionReference clothCollection =
       FirebaseFirestore.instance.collection('cloths');
 
-  Future<void> addToCart(CartItem item) async {
-    await clothCollection.doc(item.id).set({
-      'id': item.id,
-      'type': item.type,
-      'price': item.price,
-      'image': item.image,
+  /// Get all clothes as a stream (real-time updates)
+  Stream<List<CartItem>> getAllClothesStream() {
+    return clothCollection.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return CartItem.fromFirestore(doc);
+      }).toList();
     });
   }
 
-  Future<List<CartItem>> getAllClothes() async {
-    QuerySnapshot querySnapshot = await clothCollection.get();
-    return querySnapshot.docs.map(
-      (doc) {
-        return CartItem(
-          id: doc['id'],
-          type: doc['type'],
-          price: doc['price'],
-          image: doc['image'],
-        );
-      },
-    ).toList();
-  }
-
-  Future<void> updateCloth(String id, CartItem item) async {
-    await clothCollection.doc(id).update({
-      'type': item.type,
-      'price': item.price,
-      'image': item.image,
+  /// Get clothes filtered by category as a stream
+  Stream<List<CartItem>> getClothesByCategoryStream(String selectedCategory) {
+    return getAllClothesStream().map((allItems) {
+      return allItems.where((item) => item.type == selectedCategory).toList();
     });
-  }
-
-  Future<void> deleteCloth(String id) async {
-    await clothCollection.doc(id).delete();
   }
 }

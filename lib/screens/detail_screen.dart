@@ -5,8 +5,10 @@ class DetailScreen extends StatefulWidget {
   const DetailScreen({
     super.key,
     required this.item,
+    required this.addToCart,
   });
   final CartItem item;
+  final Function(CartItem) addToCart;
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -17,27 +19,96 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your order detail'),
+        title: const Text(
+          ' Detail of selected item',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(widget.item.image,
-                height: 200, width: double.infinity, fit: BoxFit.cover),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Type: ${widget.item.type}',
-                      style: const TextStyle(fontSize: 18)),
-                  Text('Price: ${widget.item.price} Birr',
-                      style: const TextStyle(fontSize: 18)),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.only(top: 15.0),
+        child: Center(
+          child: Column(
+            children: [
+              Image.network(
+                widget.item.image,
+                height: 300,
+                width: 300,
+                fit: BoxFit.cover,
               ),
-            ),
-          ],
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'Description: ', // Bold part
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Color.fromARGB(169, 20, 18, 18),
+                            ),
+                          ),
+                          TextSpan(
+                            text: widget.item.detail, // Normal text
+                            style: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 18,
+                              color: Color.fromARGB(169, 20, 18, 18),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Type: ${widget.item.type}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      'Price: ${widget.item.price} Birr',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          widget.addToCart(widget.item);
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          side: const BorderSide(
+                            color: Color.fromARGB(191, 0, 0, 0),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Text(
+                          'Add to cart',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
