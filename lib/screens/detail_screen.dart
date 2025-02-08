@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tana_web_commerce/providers/cart_provider.dart';
 
-class DetailScreen extends StatefulWidget {
+class DetailScreen extends ConsumerStatefulWidget {
   const DetailScreen({
     super.key,
     required this.item,
-    required this.addToCart,
   });
   final CartItem item;
-  final Function(CartItem) addToCart;
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  ConsumerState<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends ConsumerState<DetailScreen> {
   @override
   Widget build(BuildContext context) {
+    final cartNotifier = ref.read(cartProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -85,7 +86,9 @@ class _DetailScreenState extends State<DetailScreen> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          widget.addToCart(widget.item);
+                          cartNotifier.addToCart(
+                            widget.item,
+                          );
                           Navigator.of(context).pop();
                         },
                         style: TextButton.styleFrom(

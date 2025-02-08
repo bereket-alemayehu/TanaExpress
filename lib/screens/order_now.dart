@@ -1,55 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
+import 'package:tana_web_commerce/providers/order_now_provider.dart';
 import 'package:tana_web_commerce/screens/buy_now.dart';
-import 'package:tana_web_commerce/firebase_model/ordered_item.dart'; // Firebase operations
+import 'package:tana_web_commerce/firebase_model/ordered_item.dart';
 
-class OrderNowSheet extends StatefulWidget {
+class OrderNowSheet extends ConsumerStatefulWidget {
   final CartItem item;
-  final bool isEditing; // True if opened from "Edit", false if from "Buy Now"
+  final bool isEditing;
 
   const OrderNowSheet({
     super.key,
     required this.item,
-    this.isEditing = false, // Default to "Buy Now" behavior
+    this.isEditing = false,
   });
 
   @override
-  State<OrderNowSheet> createState() => _OrderNowSheetState();
+  ConsumerState<OrderNowSheet> createState() => _OrderNowSheetState();
 }
 
-class _OrderNowSheetState extends State<OrderNowSheet> {
-  double qty = 1;
+class _OrderNowSheetState extends ConsumerState<OrderNowSheet> {
   final FirebaseOperations firebaseOperations = FirebaseOperations();
 
   @override
-  void initState() {
-    super.initState();
-    qty = widget.item.qty.toDouble(); // Set initial quantity from item
-  }
-
-  void _increaseQty() {
-    setState(() {
-      qty++;
-    });
-  }
-
-  void _decreaseQty() {
-    if (qty > 1) {
-      setState(() {
-        qty--;
-      });
-    }
-  }
-
-  void _handleUpdate() {
-    Navigator.pop(context, qty.toInt());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final qty = ref.watch(qtyProvider(widget.item));
+
+    void increaseQty() {
+      ref.read(qtyProvider(widget.item).notifier).state = qty + 1;
+    }
+
+    void decreaseQty() {
+      if (qty > 1) {
+        ref.read(qtyProvider(widget.item).notifier).state = qty - 1;
+      }
+    }
+
+    void handleUpdate() {
+      Navigator.pop(context, qty.toInt());
+    }
+
     return Container(
       padding: const EdgeInsets.all(16.0),
-      height: 350, // Adjust height as needed
+      height: 350,
       decoration: const BoxDecoration(
         color: Color.fromARGB(205, 216, 213, 213),
         borderRadius: BorderRadius.only(
@@ -99,7 +92,7 @@ class _OrderNowSheetState extends State<OrderNowSheet> {
             children: [
               const Text('Qty: '),
               IconButton(
-                onPressed: _decreaseQty,
+                onPressed: decreaseQty,
                 icon: const Icon(Icons.remove),
               ),
               Text(
@@ -107,7 +100,7 @@ class _OrderNowSheetState extends State<OrderNowSheet> {
                 style: const TextStyle(fontSize: 18),
               ),
               IconButton(
-                onPressed: _increaseQty,
+                onPressed: increaseQty,
                 icon: const Icon(Icons.add),
               ),
             ],
@@ -117,10 +110,8 @@ class _OrderNowSheetState extends State<OrderNowSheet> {
             child: TextButton(
               onPressed: () async {
                 if (widget.isEditing) {
-                  // If updating, return new qty and close sheet
-                  _handleUpdate();
+                  handleUpdate();
                 } else {
-                  // If buying, navigate to Buy Now screen
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>

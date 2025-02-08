@@ -8,10 +8,11 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
     state = [...state, item];
   }
 
-  int get cartItemCount => state.length;
+  void removeFromCart(String id) {
+    state = state.where((item) => item.id != id).toList();
+  }
 }
 
-// Riverpod Provider for cart state
 final cartProvider = StateNotifierProvider<CartNotifier, List<CartItem>>((ref) {
   return CartNotifier();
 });

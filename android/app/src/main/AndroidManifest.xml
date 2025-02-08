@@ -9,7 +9,7 @@
 
 
     <application
-        android:label="tana_web_commerce"
+        android:label="TanaExpress"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

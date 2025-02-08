@@ -129,7 +129,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Payment Method Section (Aligning radio buttons to the start)
+             
               const Text(
                 'Payment Method',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -221,14 +221,14 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                 },
                                 child: const Text(
                                   'OK',
-                                  // style: TextStyle(color: Colors.green),
+                            
                                 ),
                               ),
                             ],
                           ),
                         );
                       } catch (e) {
-                        // Show an error dialog in case of failure
+
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(

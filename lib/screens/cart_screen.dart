@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
-import 'package:tana_web_commerce/screens/order_now.dart'; // Import the new file
+import 'package:tana_web_commerce/providers/cart_provider.dart';
+import 'package:tana_web_commerce/screens/order_now.dart'; 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Cartscreen extends StatefulWidget {
+class Cartscreen extends ConsumerStatefulWidget {
   const Cartscreen({
     super.key,
-    required this.cartList,
   });
-  final List<CartItem> cartList;
 
   @override
-  State<Cartscreen> createState() => _CartscreenState();
+  ConsumerState<Cartscreen> createState() => _CartscreenState();
 }
 
-class _CartscreenState extends State<Cartscreen> {
+class _CartscreenState extends ConsumerState<Cartscreen> {
   Future<void> _showOrderNowSheet(CartItem item) async {
     final qty = await showModalBottomSheet<int>(
       context: context,
       builder: (BuildContext context) {
-        return OrderNowSheet(item: item); // Pass the item to the sheet
+        return OrderNowSheet(item: item); 
       },
     );
 
     if (qty != null) {
-      // Use the quantity selected by the user
-      // Add the item with the updated quantity to the cart or handle the purchase logic here
-      print('User selected quantity: $qty');
+    
+      // print('User selected quantity: $qty');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final cartList = ref.watch(cartProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -46,15 +46,15 @@ class _CartscreenState extends State<Cartscreen> {
         ),
       ),
       body: Center(
-        child: widget.cartList.isEmpty
+        child: cartList.isEmpty
             ? const Text(
                 'Your cart is empty.',
                 style: TextStyle(fontSize: 18),
               )
             : ListView.builder(
-                itemCount: widget.cartList.length,
+                itemCount: cartList.length,
                 itemBuilder: (context, index) {
-                  final item = widget.cartList[index];
+                  final item = cartList[index];
                   return ListTile(
                     leading: Container(
                       height: 40,
@@ -102,6 +102,13 @@ class _CartscreenState extends State<Cartscreen> {
                             style: TextStyle(fontSize: 12),
                           ),
                         ),
+                        TextButton(
+                            onPressed: () {
+                              ref
+                                  .read(cartProvider.notifier)
+                                  .removeFromCart(item.id);
+                            },
+                            child: const Text('Cancel')),
                       ],
                     ),
                   );
