@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tana_web_commerce/firebase_model/firebase_operations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tana_web_commerce/providers/orderedItem_provider.dart';
 import 'package:tana_web_commerce/widgets/home_appbar.dart';
