@@ -59,8 +59,8 @@ class OrderedItem extends ConsumerWidget {
                         height: 40,
                         width: 40,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            shape: BoxShape.rectangle,
+                            // borderRadius: BorderRadius.circular(8),
+                            shape: BoxShape.circle,
                             image: item.image.isNotEmpty
                                 ? DecorationImage(
                                     image: NetworkImage(item.image),

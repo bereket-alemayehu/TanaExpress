@@ -11,15 +11,21 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    // this is used to ensure the state<SplashScreen> is initialized properly.
     super.initState();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      }
-    });
+    Future.delayed(
+      // here we don't need to use async and await  because  it is future-based function that schedules an  operation to run after a certain duration rather wating  for undetermined time long.
+      const Duration(seconds: 3),
+      () {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            // this means user can't go back to this screen by pressing back button.
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -30,7 +36,8 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/logo.png', height: 150),
+            Image.asset('assets/images/logo.png',
+                height: 150), // this is using image.asset from assets folder
             const SizedBox(height: 20),
             const Text(
               "Welcome to TanaExpress",

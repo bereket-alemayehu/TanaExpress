@@ -96,8 +96,7 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
-              const SizedBox(height: 26),
+              const SizedBox(height: 42),
 
               // Item Details Section
               const Text(
@@ -129,7 +128,6 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
               ),
               const SizedBox(height: 16),
 
-             
               const Text(
                 'Payment Method',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -221,14 +219,12 @@ class _BuyNowScreenState extends State<BuyNowScreen> {
                                 },
                                 child: const Text(
                                   'OK',
-                            
                                 ),
                               ),
                             ],
                           ),
                         );
                       } catch (e) {
-
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(

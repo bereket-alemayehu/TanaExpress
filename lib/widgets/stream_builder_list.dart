@@ -48,7 +48,7 @@ class _StreamBuilderListState extends State<StreamBuilderList> {
         List<CartItem> filteredData = snapshot.data!;
 
         return GridView.builder(
-          shrinkWrap: true,
+          shrinkWrap: true, // use as much space as it needs  only.
           itemCount: filteredData.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -61,28 +61,28 @@ class _StreamBuilderListState extends State<StreamBuilderList> {
             return GestureDetector(
               onTap: () => _navigateToDetailScreen(item),
               child: Card(
-                elevation: 4,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.network(
-                        item.image,
-                        height: 150,
-                        width: 150,
-                        fit: BoxFit.cover,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Price: ${item.price} Birr',
-                        style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+                elevation: 4, // gives shadow  for the card
+                // child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.network(
+                      item.image,
+                      height: 150,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Price: ${item.price} Birr',
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
+                // ),
               ),
             );
           },

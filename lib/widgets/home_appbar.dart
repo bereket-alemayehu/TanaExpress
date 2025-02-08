@@ -15,6 +15,7 @@ class HomeAppbar extends ConsumerStatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  //In this case, the HomeAppbar widget is designed to replace the default AppBar widget, so it must tell Flutter that it has the standard toolbar height by returning kToolbarHeight.
 }
 
 class _HomeAppbarState extends ConsumerState<HomeAppbar> {
@@ -50,10 +51,10 @@ class _HomeAppbarState extends ConsumerState<HomeAppbar> {
       actions: [
         badges.Badge(
           badgeContent: Text(
-            ref.watch(orderedItemCountProvider).bitLength.toString(),
+            ref.watch(orderedItemCountProvider).toString(),
             style: const TextStyle(color: Colors.white, fontSize: 12),
           ),
-          showBadge: ref.watch(orderedItemCountProvider).bitLength > 0,
+          showBadge: ref.watch(orderedItemCountProvider) > 0,
           position: badges.BadgePosition.topEnd(top: 0, end: 3),
           child: IconButton(
             onPressed: _navigateToOrderedScreen,

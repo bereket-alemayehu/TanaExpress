@@ -12,7 +12,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  late String selectedCategory = 'Cultural';
+  // this is needed to interact to providers of  the riverpod.
+  late String selectedCategory =
+      'Cultural'; // here late is used  because the data is fetched asynchronously from the database. and it is used for  reduce memory usage ,but should be initialized before use.
   @override
   void initState() {
     super.initState();
@@ -20,14 +22,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _fetchOrderedItemCount() {
-    FirebaseFirestore.instance
-        .collection('ordered_items')
-        .snapshots()
-        .listen((snapshot) {
-      ref
-          .read(orderedItemCountProvider.notifier)
-          .updateOrderedItemCount(snapshot.docs.length);
-    });
+    FirebaseFirestore.instance.collection('ordered_items').snapshots().listen(
+      (snapshot) {
+        ref
+            .read(orderedItemCountProvider.notifier)
+            .updateOrderedItemCount(snapshot.docs.length);
+      },
+    );
   }
 
   @override
@@ -51,7 +52,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             selectedCategory = index == 0 ? 'Cultural' : 'Modern';
           });
         },
-        currentIndex: selectedCategory == 'Cultural' ? 0 : 1,
+        currentIndex: selectedCategory == 'Cultural'
+            ? 0
+            : 1, // which higlights the selected category.
       ),
     );
   }
