@@ -9,8 +9,7 @@ class OrderedItemCountNotifier extends StateNotifier<int> {
   }
 }
 
-final orderedItemCountProvider =// this is a special type of provider in riverpod this lets you to access this widget from any widget in the app.
-    StateNotifierProvider<OrderedItemCountNotifier, int>(
+final orderedItemCountProvider = StateNotifierProvider<OrderedItemCountNotifier, int>(
   (ref) {
     return OrderedItemCountNotifier();
   },

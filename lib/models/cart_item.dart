@@ -21,12 +21,10 @@ class CartItem {
     final data = doc.data() as Map<String, dynamic>?;
     return CartItem(
       id: doc.id,
-      type: data?['type'] as String? ?? 'Unknown', // Default value if null
-      price: (data?['price'] as num?)?.toDouble() ??
-          0.0, // Convert and handle null
-      image: data?['image'] as String? ?? '', // Empty string if null
-      detail:
-          data?['detail'] as String? ?? 'No details available', // Default text
+      type: data?['type'] as String? ?? 'Unknown',
+      price: (data?['price'] as num?)?.toDouble() ?? 0.0,
+      image: data?['image'] as String? ?? '',
+      detail: data?['detail'] as String? ?? 'No details available',
       qty: (data?['qty'] as num?)?.toDouble() ?? 0.0,
     );
   }

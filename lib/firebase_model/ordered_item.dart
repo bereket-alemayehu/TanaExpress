@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tana_web_commerce/models/cart_item.dart';
 
 class FirebaseOperations {
-  final CollectionReference orderCollection =
-      FirebaseFirestore.instance.collection('ordered_items');
+  final CollectionReference orderCollection =  FirebaseFirestore.instance.collection('ordered_items');
 
   // Fetch all ordered items (for the cart list)
   Stream<List<CartItem>> getOrderedItems() {
